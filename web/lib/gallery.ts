@@ -8,20 +8,35 @@ export interface PublicGalleryImage {
   category: string;
 }
 
-export async function getPublishedGalleryImages(): Promise<PublicGalleryImage[]> {
-  const images = await db.galleryImage.findMany({
-    where: { published: true },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-  });
+function defaultGalleryImages(): PublicGalleryImage[] {
+  return defaultImages.map((img, i) => ({
+    id: `default-${i}`,
+    ...img,
+  }));
+}
 
-  if (images.length === 0) {
-    return defaultImages.map((img, i) => ({
-      id: `default-${i}`,
-      ...img,
-    }));
+export async function getPublishedGalleryImages(): Promise<PublicGalleryImage[]> {
+  if (process.env.DOCKER_BUILD === "1") {
+    return defaultGalleryImages();
   }
 
-  return images;
+  try {
+    const images = await db.galleryImage.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    });
+
+    if (images.length === 0) {
+      return defaultGalleryImages();
+    }
+
+    return images;
+  } catch (error) {
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      return defaultGalleryImages();
+    }
+    throw error;
+  }
 }
 
 export async function getGalleryCategories(
