@@ -35,7 +35,11 @@ Create the MySQL database first, e.g. `CREATE DATABASE eddie_youman CHARACTER SE
 2. Copy `.env.example` to `.env` and fill in production values.
    - `DATABASE_URL` should use `127.0.0.1` when MySQL runs on the same server (deploy uses host networking).
 3. Run `./deploy.sh` — builds Docker image and starts on **port 8007**.
-3. Add Cloudflare tunnel ingress rule in `/etc/cloudflared/config.yml`:
+4. For a **new hostname**, also create the Cloudflare DNS route (one-time):
+   ```bash
+   cloudflared tunnel route dns homeserver eddie.kartersanamo.com
+   ```
+5. Add Cloudflare tunnel ingress rule in `/etc/cloudflared/config.yml`:
 
 ```yaml
   - hostname: eddie.kartersanamo.com

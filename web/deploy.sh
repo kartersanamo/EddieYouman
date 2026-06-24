@@ -109,8 +109,20 @@ docker run -d \
 
 echo "Done. Container listening on http://localhost:${HOST_PORT}"
 echo ""
+HOSTNAME="$(printf '%s' "${SITE_URL}" | sed -E 's#^https?://##; s#/.*##')"
+TUNNEL_NAME="homeserver"
+if command -v cloudflared >/dev/null 2>&1; then
+  echo "Ensuring Cloudflare DNS route for ${HOSTNAME}..."
+  if cloudflared tunnel route dns "${TUNNEL_NAME}" "${HOSTNAME}" 2>&1; then
+    :
+  else
+    echo "WARN: Could not create DNS route automatically. Run:"
+    echo "  cloudflared tunnel route dns ${TUNNEL_NAME} ${HOSTNAME}"
+  fi
+fi
+echo ""
 echo "If this is a new hostname, add to /etc/cloudflared/config.yml:"
-echo "  - hostname: eddie.kartersanamo.com"
+echo "  - hostname: ${HOSTNAME}"
 echo "    service: http://localhost:${HOST_PORT}"
 echo ""
 echo "Then: sudo systemctl restart cloudflared"
