@@ -14,10 +14,4 @@ fi
 
 mkdir -p "${DATA_DIR:-/app/data}"
 
-npx prisma migrate deploy
-
-if [ -n "${ADMIN_EMAILS}${ADMIN_EMAIL}" ] && [ -n "${ADMIN_PASSWORD}" ]; then
-  node prisma/seed.mjs
-fi
-
 exec node server.js

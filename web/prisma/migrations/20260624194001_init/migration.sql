@@ -99,7 +99,7 @@ CREATE TABLE `QuoteRequest` (
     `customerEmail` VARCHAR(191) NOT NULL,
     `customerPhone` VARCHAR(191) NULL,
     `address` VARCHAR(191) NULL,
-    `services` TEXT NOT NULL DEFAULT '[]',
+    `services` TEXT NOT NULL,
     `message` TEXT NOT NULL,
     `quotedAmountCents` INTEGER NULL,
     `quoteNotes` TEXT NULL,

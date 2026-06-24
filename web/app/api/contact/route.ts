@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
           customerEmail: email.toLowerCase(),
           customerPhone: phone || null,
           message,
+          services: "[]",
           status: "PENDING",
         },
       });

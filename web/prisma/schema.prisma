@@ -131,7 +131,7 @@ model QuoteRequest {
   customerEmail       String
   customerPhone       String?
   address             String?
-  services            String      @default("[]") @db.Text
+  services            String      @db.Text
   message             String      @db.Text
   quotedAmountCents   Int?
   quoteNotes          String?     @db.Text
