@@ -33,7 +33,7 @@ Create the MySQL database first, e.g. `CREATE DATABASE eddie_youman CHARACTER SE
 
 1. Create a MySQL database: `CREATE DATABASE eddie_youman CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
 2. Copy `.env.example` to `.env` and fill in production values.
-   - `DATABASE_URL` for Docker must reach MySQL from inside the container (e.g. `host.docker.internal` on the same host).
+   - `DATABASE_URL` should use `127.0.0.1` when MySQL runs on the same server (deploy uses host networking).
 3. Run `./deploy.sh` — builds Docker image and starts on **port 8007**.
 3. Add Cloudflare tunnel ingress rule in `/etc/cloudflared/config.yml`:
 
