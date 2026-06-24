@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { LocalBusinessJsonLd } from "@/components/seo/LocalBusinessJsonLd";
 
 export default function MarketingLayout({
   children,
@@ -8,6 +9,7 @@ export default function MarketingLayout({
 }) {
   return (
     <>
+      <LocalBusinessJsonLd />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:bg-teal focus:px-4 focus:py-2 focus:text-white"

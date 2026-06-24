@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
             currency: "usd",
             unit_amount: booking.amountChargedCents,
             product_data: {
-              name: `Exterior cleaning — ${booking.customerName}`,
+              name: `Construction clean up — ${booking.customerName}`,
               description: `Service on ${booking.scheduledDate.toISOString().slice(0, 10)}`,
             },
           },

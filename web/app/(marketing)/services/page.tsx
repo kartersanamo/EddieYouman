@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { AnimateIn } from "@/components/ui/AnimateIn";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { formatMethod, services, site } from "@/lib/site-config";
+import { formatCategory, services, site } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: `Pressure washing and soft washing services in ${site.serviceArea}. No pricing online — request a free quote.`,
+  description: `Construction clean up services in ${site.serviceArea}. No pricing online — request a free quote.`,
 };
 
 export default function ServicesPage() {
@@ -16,8 +16,8 @@ export default function ServicesPage() {
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Our services"
-            title="Everything we can clean."
-            subtitle="We tailor pressure and detergents to each surface. Request a free quote for any combination of services — no prices listed online."
+            title="Specialized construction clean up."
+            subtitle="I tailor my approach to every project — residential, commercial, and government. Request a free quote for any combination of services — no prices listed online."
             light
           />
         </div>
@@ -39,7 +39,7 @@ export default function ServicesPage() {
                         {service.title}
                       </h2>
                       <span className="rounded-full bg-mint px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal">
-                        {formatMethod(service.method)}
+                        {formatCategory(service.category)}
                       </span>
                     </div>
                     <p className="mt-2 text-lg text-slate/80">
@@ -48,6 +48,11 @@ export default function ServicesPage() {
                     <p className="mt-4 leading-relaxed text-slate/70">
                       {service.description}
                     </p>
+                    <div className="mt-6">
+                      <ButtonLink href="/book" variant="primary" size="sm">
+                        Book now
+                      </ButtonLink>
+                    </div>
                   </div>
                 </article>
               </AnimateIn>
@@ -60,7 +65,7 @@ export default function ServicesPage() {
             Not sure what you need?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-white/80">
-            {site.quotePromise}. Tell us about your property and we&apos;ll
+            {site.quotePromise}. Tell me about your project and I&apos;ll
             recommend the right services.
           </p>
           <div className="mt-6 flex flex-col justify-center gap-4 sm:flex-row">

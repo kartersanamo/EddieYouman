@@ -11,9 +11,9 @@ export function DifferenceSection() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <AnimateIn>
             <SectionHeading
-              eyebrow="The Elevate difference"
-              title="Pressure where it counts. Softness where it matters."
-              subtitle={`Most "pressure washers" use one setting for everything — and damage paint, wood, and shingles. We tailor PSI and biodegradable detergents to each surface, so the only thing that disappears is the grime.`}
+              eyebrow="Why Eddie Youman"
+              title="Precision where it counts. Speed when it matters."
+              subtitle="Construction clean up isn't one-size-fits-all. I tailor my approach to every project — from rough clean during active construction to final punch-list detail before walkthrough."
             />
             <ul className="space-y-4">
               {differentiators.map((item) => (
@@ -29,8 +29,8 @@ export function DifferenceSection() {
           <AnimateIn delay={0.15}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl">
               <Image
-                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1000&q=80"
-                alt="Technician soft washing a home's siding"
+                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1000&q=80"
+                alt="Construction site with professional cleanup crew"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

@@ -3,6 +3,7 @@ import {
   getMailFromAddress,
   getMailgunClient,
 } from "@/lib/mailgun";
+import { site } from "@/lib/site-config";
 import type { ContactFormData } from "@/lib/validators/contact";
 
 export type ContactFormPayload = ContactFormData;
@@ -29,7 +30,7 @@ export async function sendContactFormEmail(
   await mailgun.messages.create(domain, {
     from,
     to: recipients,
-    subject: `New inquiry from ${fullName} — Elevate Exterior`,
+    subject: `New inquiry from ${fullName} — ${site.shortName}`,
     text: `New contact form submission.
 
 Name: ${fullName}
@@ -39,7 +40,7 @@ Message:
 ${payload.message}
 `,
     html: `
-<p>New contact form submission from the Elevate Exterior website.</p>
+<p>New contact form submission from the ${site.name} website.</p>
 <p><strong>Name:</strong> ${fullName}<br>
 <strong>Email:</strong> ${payload.email}${payload.phone ? `<br><strong>Phone:</strong> ${payload.phone}` : ""}</p>
 <p><strong>Message:</strong></p>

@@ -1,37 +1,43 @@
 import { AnimateIn } from "@/components/ui/AnimateIn";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { formatMethod, services } from "@/lib/site-config";
+import { formatCategory, services } from "@/lib/site-config";
 
 export function ServicesPreview() {
-  const preview = services.slice(0, 4);
-
   return (
     <section className="section-padding bg-white">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
-          eyebrow="What we clean"
-          title="Built for every surface."
-          subtitle="From delicate cedar siding to weathered concrete, we match the right pressure and detergent to every job."
+          eyebrow="Our services"
+          title="Construction clean up for every project."
+          subtitle="From active construction sites to emergency disaster response, I provide specialized clean up solutions tailored to Jacksonville projects."
         />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {preview.map((service, i) => {
+          {services.map((service, i) => {
             const Icon = service.icon;
             return (
               <AnimateIn key={service.id} delay={i * 0.08}>
-                <article className="group h-full rounded-2xl border border-slate/10 bg-cream p-6 transition-shadow hover:shadow-lg">
+                <article className="group flex h-full flex-col rounded-2xl border border-slate/10 bg-cream p-6 transition-shadow hover:shadow-lg">
                   <div className="mb-4 inline-flex rounded-xl bg-mint p-3 text-teal">
                     <Icon size={24} aria-hidden />
                   </div>
                   <h3 className="font-display text-xl font-bold text-forest">
                     {service.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate/70">
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-slate/70">
                     {service.shortDescription}
                   </p>
                   <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-teal">
-                    {formatMethod(service.method)}
+                    {formatCategory(service.category)}
                   </p>
+                  <div className="mt-4 flex gap-2">
+                    <ButtonLink href="/services" variant="outline" size="sm">
+                      Learn more
+                    </ButtonLink>
+                    <ButtonLink href="/book" variant="primary" size="sm">
+                      Book now
+                    </ButtonLink>
+                  </div>
                 </article>
               </AnimateIn>
             );

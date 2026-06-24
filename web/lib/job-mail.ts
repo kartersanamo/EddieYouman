@@ -50,7 +50,7 @@ export async function sendJobCompletedEmail(booking: Booking): Promise<void> {
     subject: `Your service is complete — ${site.shortName}`,
     text: `Hi ${booking.customerName},
 
-Your exterior cleaning is complete! View photos, pay your invoice (${amount}), or set up recurring service:
+Your construction clean up is complete! View photos, pay your invoice (${amount}), or set up recurring service:
 
 ${url}
 
@@ -60,10 +60,10 @@ Set up recurring service: ${recurringUrl}
 — ${site.name}`,
     html: `
 <p>Hi ${booking.customerName},</p>
-<p>Your exterior cleaning is <strong>complete</strong>! View your job summary, before/after photos, and invoice at the link below.</p>
+<p>Your construction clean up is <strong>complete</strong>! View your job summary, before/after photos, and invoice at the link below.</p>
 <p style="margin:24px 0;">
-  <a href="${payUrl}" style="display:inline-block;background:#0d7a6f;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;margin-right:12px;">Pay ${amount}</a>
-  <a href="${recurringUrl}" style="display:inline-block;background:#1a2e1a;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">Schedule recurring</a>
+  <a href="${payUrl}" style="display:inline-block;background:#e67e22;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;margin-right:12px;">Pay ${amount}</a>
+  <a href="${recurringUrl}" style="display:inline-block;background:#1e2a3a;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">Schedule recurring</a>
 </p>
 <p><a href="${url}">View your job summary &amp; photos</a></p>
 <p>— ${site.name}</p>`,

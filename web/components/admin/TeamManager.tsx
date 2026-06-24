@@ -113,7 +113,7 @@ export function TeamManager({
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               className="w-full rounded-lg border border-slate/20 px-3 py-2"
-              placeholder="Kyle"
+              placeholder="Eddie"
             />
           </div>
           <div>

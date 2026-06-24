@@ -14,7 +14,7 @@ export async function GalleryTeaser() {
         <SectionHeading
           eyebrow="Results"
           title="See what's possible."
-          subtitle="Real transformations from our recent work."
+          subtitle="Real results from construction clean up projects across Jacksonville."
         />
         <div className="grid gap-4 md:grid-cols-3">
           {preview.map((img, i) => (

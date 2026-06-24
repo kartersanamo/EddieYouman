@@ -5,7 +5,7 @@ import { site } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Book",
-  description: `Schedule a pressure washing or soft washing appointment with ${site.name}.`,
+  description: `Schedule a construction clean up appointment with ${site.name}.`,
 };
 
 export default function BookPage() {
@@ -15,7 +15,7 @@ export default function BookPage() {
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Book online"
-            title="Schedule your cleaning."
+            title="Schedule your cleanup."
             subtitle="Pick your services, choose a time, and we'll confirm within 24 hours. No payment required upfront."
             align="center"
           />

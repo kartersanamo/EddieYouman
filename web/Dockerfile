@@ -17,7 +17,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DOCKER_BUILD=1
 ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
-ENV DATABASE_URL="file:./data/db.sqlite"
+ENV DATABASE_URL="mysql://build:build@localhost:3306/build"
 COPY package.json package-lock.json ./
 COPY prisma ./prisma
 RUN --mount=type=cache,target=/root/.npm \
@@ -28,6 +28,7 @@ COPY public ./public
 COPY app ./app
 COPY components ./components
 COPY lib ./lib
+COPY content ./content
 RUN --mount=type=cache,target=/app/.next/cache \
     npx prisma generate && \
     npx next build

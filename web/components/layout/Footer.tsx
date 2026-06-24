@@ -17,7 +17,7 @@ export function Footer() {
               {site.description}
             </p>
             <ButtonLink href="/book" variant="primary" size="sm">
-              Book a cleaning
+              Book online
             </ButtonLink>
           </div>
 
@@ -52,7 +52,7 @@ export function Footer() {
               Services
             </h3>
             <ul className="space-y-3">
-              {services.slice(0, 5).map((service) => (
+              {services.map((service) => (
                 <li key={service.id}>
                   <Link
                     href="/services"
@@ -76,7 +76,7 @@ export function Footer() {
                   className="mt-0.5 shrink-0 text-teal-light"
                   aria-hidden
                 />
-                <span>{site.serviceArea}</span>
+                <span>{site.address}</span>
               </li>
               <li className="flex gap-3">
                 <Phone
@@ -114,7 +114,14 @@ export function Footer() {
           <p>
             © {year} {site.legalName}. All rights reserved.
           </p>
-          <span>{site.serviceArea}</span>
+          <div className="flex gap-4">
+            <Link href="/privacy" className="hover:text-teal-light">
+              Privacy
+            </Link>
+            <Link href="/legal" className="hover:text-teal-light">
+              Legal
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

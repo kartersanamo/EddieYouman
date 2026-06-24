@@ -124,7 +124,7 @@ export async function sendBookingConfirmedEmail(
     subject: `Booking confirmed — ${formatDate(payload.scheduledDate)}`,
     text: `Hi ${payload.customerName},
 
-Your cleaning is confirmed!
+Your cleanup is confirmed!
 
 ${details}
 
@@ -133,7 +133,7 @@ See you then! Questions? Call ${site.phone}.
 — ${site.name}`,
     html: `
 <p>Hi ${payload.customerName},</p>
-<p><strong>Your cleaning is confirmed!</strong></p>
+<p><strong>Your cleanup is confirmed!</strong></p>
 <pre style="white-space:pre-wrap;font-family:sans-serif;background:#f4f4f4;padding:12px;border-radius:8px;">${details}</pre>
 <p>See you then! Questions? Call <a href="${site.phoneHref}">${site.phone}</a>.</p>
 <p>— ${site.name}</p>`,

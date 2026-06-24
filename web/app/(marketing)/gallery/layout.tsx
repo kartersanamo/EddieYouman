@@ -3,7 +3,7 @@ import { site } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Gallery",
-  description: `Before and after pressure washing results from ${site.name}.`,
+  description: `Before and after construction clean up results from ${site.name}.`,
 };
 
 export default function GalleryLayout({

@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { HardHat } from "lucide-react";
 import Link from "next/link";
 import { site } from "@/lib/site-config";
 
@@ -18,9 +18,9 @@ export function SiteLogo({
 
   const content = (
     <span className={`inline-flex items-center gap-2 font-display font-bold ${className}`}>
-      <Sparkles className={`h-6 w-6 shrink-0 ${accentClass}`} aria-hidden />
+      <HardHat className={`h-6 w-6 shrink-0 ${accentClass}`} aria-hidden />
       <span className={textClass}>
-        Elevate<span className={accentClass}>Exterior</span>
+        Eddie<span className={accentClass}> Youman</span>
       </span>
     </span>
   );

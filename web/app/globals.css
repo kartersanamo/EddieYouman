@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-forest: #1a3a2f;
-  --color-forest-light: #2d5a47;
+  --color-forest: #1e2a3a;
+  --color-forest-light: #2d3f56;
   --color-slate: #1e293b;
-  --color-teal: #14b8a6;
-  --color-teal-light: #5eead4;
-  --color-mint: #ecfdf5;
-  --color-cream: #f8faf9;
+  --color-teal: #e67e22;
+  --color-teal-light: #f5a623;
+  --color-mint: #fef9f3;
+  --color-cream: #f7f8fa;
   --color-white: #ffffff;
   --font-display: var(--font-outfit);
   --font-body: var(--font-dm-sans);
@@ -46,4 +46,32 @@ body {
 
 .text-balance {
   text-wrap: balance;
+}
+
+.prose-blog {
+  @apply max-w-none text-slate leading-relaxed;
+}
+
+.prose-blog h2 {
+  @apply mt-10 mb-4 font-display text-2xl font-bold text-forest;
+}
+
+.prose-blog h3 {
+  @apply mt-8 mb-3 font-display text-xl font-semibold text-forest;
+}
+
+.prose-blog p {
+  @apply mb-4;
+}
+
+.prose-blog ul {
+  @apply mb-4 list-disc space-y-2 pl-6;
+}
+
+.prose-blog ol {
+  @apply mb-4 list-decimal space-y-2 pl-6;
+}
+
+.prose-blog a {
+  @apply text-teal underline hover:text-teal-light;
 }

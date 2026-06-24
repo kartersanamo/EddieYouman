@@ -63,17 +63,9 @@ docker build -t "${IMAGE_TAG}" \
 
 mkdir -p "${DATA_DIR_HOST}"
 
-echo "Running database migrations on host..."
-DATABASE_URL="file:${DATA_DIR_HOST}/db.sqlite" npx prisma migrate deploy
-
-ADMIN_EMAIL_VAL="$(read_env_var ADMIN_EMAIL || true)"
-ADMIN_PASSWORD_VAL="$(read_env_var ADMIN_PASSWORD || true)"
-if [[ -n "${ADMIN_EMAIL_VAL}" && -n "${ADMIN_PASSWORD_VAL}" ]]; then
-  echo "Seeding database on host..."
-  DATABASE_URL="file:${DATA_DIR_HOST}/db.sqlite" \
-    ADMIN_EMAIL="${ADMIN_EMAIL_VAL}" \
-    ADMIN_PASSWORD="${ADMIN_PASSWORD_VAL}" \
-    node prisma/seed.mjs
+if [[ -z "$(read_env_var DATABASE_URL || true)" ]]; then
+  echo "ERROR: DATABASE_URL must be set in .env (MySQL connection string)."
+  exit 1
 fi
 
 echo "Replacing container..."
@@ -83,6 +75,7 @@ echo "Starting container on port ${HOST_PORT}..."
 docker run -d \
   --name "${CONTAINER_NAME}" \
   --restart unless-stopped \
+  --add-host=host.docker.internal:host-gateway \
   -p "${HOST_PORT}:3000" \
   -v "${DATA_DIR_HOST}:/app/data" \
   "${ENV_FILE_ARGS[@]}" \
@@ -90,7 +83,7 @@ docker run -d \
   -e PORT=3000 \
   -e "NEXT_PUBLIC_SITE_URL=${SITE_URL}" \
   -e "AUTH_URL=${SITE_URL}" \
-  -e "DATABASE_URL=file:/app/data/db.sqlite" \
+  -e "DATA_DIR=/app/data" \
   "${IMAGE_TAG}"
 
 echo "Done. Container listening on http://localhost:${HOST_PORT}"

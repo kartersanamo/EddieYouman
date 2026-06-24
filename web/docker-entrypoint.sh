@@ -12,5 +12,12 @@ if [ -z "$AUTH_SECRET" ]; then
   exit 1
 fi
 
-mkdir -p /app/data
+mkdir -p "${DATA_DIR:-/app/data}"
+
+npx prisma migrate deploy
+
+if [ -n "${ADMIN_EMAILS}${ADMIN_EMAIL}" ] && [ -n "${ADMIN_PASSWORD}" ]; then
+  node prisma/seed.mjs
+fi
+
 exec node server.js

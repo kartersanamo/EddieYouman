@@ -5,7 +5,7 @@ Next.js marketing site with online booking, contact forms, and admin dashboard f
 ## Stack
 
 - Next.js 15, React 19, Tailwind CSS v4
-- Prisma + SQLite (booking scheduler)
+- Prisma + MySQL (booking scheduler)
 - Auth.js (admin login)
 - Mailgun (contact + booking emails)
 - Docker standalone deployment
@@ -15,7 +15,7 @@ Next.js marketing site with online booking, contact forms, and admin dashboard f
 ```bash
 cd web
 cp .env.example .env
-# Set AUTH_SECRET, ADMIN_PASSWORD, and optional Mailgun keys
+# Set DATABASE_URL (MySQL), AUTH_SECRET, ADMIN_PASSWORD, and optional Mailgun keys
 
 mkdir -p data
 npm install
@@ -24,13 +24,17 @@ npm run db:seed
 npm run dev
 ```
 
+Create the MySQL database first, e.g. `CREATE DATABASE eddie_youman CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+
 - Site: http://localhost:3000
 - Admin: http://localhost:3000/admin (login with `ADMIN_EMAILS` / `ADMIN_PASSWORD`)
 
 ## Deployment (`eddie.kartersanamo.com`)
 
-1. Copy `.env.example` to `.env` and fill in production values.
-2. Run `./deploy.sh` — builds Docker image and starts on **port 8007**.
+1. Create a MySQL database: `CREATE DATABASE eddie_youman CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+2. Copy `.env.example` to `.env` and fill in production values.
+   - `DATABASE_URL` for Docker must reach MySQL from inside the container (e.g. `host.docker.internal` on the same host).
+3. Run `./deploy.sh` — builds Docker image and starts on **port 8007**.
 3. Add Cloudflare tunnel ingress rule in `/etc/cloudflared/config.yml`:
 
 ```yaml

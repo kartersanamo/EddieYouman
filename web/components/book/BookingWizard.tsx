@@ -121,7 +121,7 @@ export function BookingWizard() {
       {step === "services" ? (
         <div>
           <h2 className="font-display text-2xl font-bold text-forest">
-            What would you like cleaned?
+            What services do you need?
           </h2>
           <p className="mt-2 text-slate/70">Select all that apply.</p>
           <ul className="mt-6 space-y-3">
@@ -249,7 +249,7 @@ export function BookingWizard() {
                   setForm((f) => ({ ...f, notes: e.target.value }))
                 }
                 className="w-full rounded-lg border border-slate/20 bg-white px-4 py-3 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
-                placeholder="Gate code, pets, special requests…"
+                placeholder="Project details, gate code, access instructions…"
               />
             </div>
           </div>

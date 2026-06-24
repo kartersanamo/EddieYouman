@@ -13,9 +13,7 @@ const ALLOWED_TYPES = new Set([
 const MAX_BYTES = 10 * 1024 * 1024;
 
 export function getUploadsRoot(): string {
-  const dbUrl = process.env.DATABASE_URL ?? "file:./data/db.sqlite";
-  const dbPath = dbUrl.replace(/^file:/, "");
-  const dataDir = path.dirname(dbPath);
+  const dataDir = process.env.DATA_DIR ?? "./data";
   return path.join(dataDir, "uploads");
 }
 

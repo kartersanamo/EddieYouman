@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -86,8 +86,8 @@ model Booking {
   customerEmail           String
   customerPhone           String
   address                 String
-  services                String
-  notes                   String?
+  services                String        @db.Text
+  notes                   String?       @db.Text
   scheduledDate           DateTime
   startTime               String
   endTime                 String
@@ -97,7 +97,7 @@ model Booking {
   paidAt                  DateTime?
   stripeCheckoutSessionId String?
   invoiceNumber           String?
-  invoiceHtml             String?
+  invoiceHtml             String?       @db.LongText
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
 
@@ -131,10 +131,10 @@ model QuoteRequest {
   customerEmail       String
   customerPhone       String?
   address             String?
-  services            String      @default("[]")
-  message             String
+  services            String      @default("[]") @db.Text
+  message             String      @db.Text
   quotedAmountCents   Int?
-  quoteNotes          String?
+  quoteNotes          String?     @db.Text
   proposedDate        DateTime?
   proposedStartTime   String?
   proposedEndTime     String?
@@ -156,13 +156,13 @@ model RecurringService {
   customerName    String
   customerPhone   String?
   address         String
-  services        String
+  services        String             @db.Text
   frequency       RecurringFrequency
   active          Boolean            @default(true)
   sourceBookingId String?            @unique
   nextServiceDate DateTime?
   lastServiceDate DateTime?
-  notes           String?
+  notes           String?            @db.Text
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
@@ -179,7 +179,7 @@ model Customer {
   phone     String?
   address   String?
   source    String   @default("booking")
-  notes     String?
+  notes     String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -199,8 +199,8 @@ model EmailTemplate {
   id        String   @id @default(cuid())
   name      String
   subject   String
-  bodyHtml  String
-  bodyText  String?
+  bodyHtml  String   @db.LongText
+  bodyText  String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -210,7 +210,7 @@ model EmailTemplate {
 model EmailList {
   id          String   @id @default(cuid())
   name        String
-  description String?
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

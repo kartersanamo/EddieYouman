@@ -8,7 +8,7 @@ export function Hero() {
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=2000&q=80"
+          src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=2000&q=80"
           alt=""
           fill
           priority
@@ -28,15 +28,16 @@ export function Hero() {
             {site.socialProof}
           </p>
           <h1 className="font-display text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-            Your home,
-            <span className="block text-teal-light">elevated.</span>
+            Premier construction
+            <span className="block text-teal-light">clean up solutions.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85">
-            {site.tagline} — fully insured, locally owned.
+            {site.tagline} — fully insured, locally owned, and dedicated to
+            exceeding your clean up needs.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
             <ButtonLink href="/book" variant="primary" size="lg">
-              Book a cleaning
+              Book online
             </ButtonLink>
             <ButtonLink
               href={site.phoneHref}

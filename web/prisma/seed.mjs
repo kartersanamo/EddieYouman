@@ -3,53 +3,53 @@ import bcrypt from "bcryptjs";
 
 const db = new PrismaClient();
 
-const site = { slotDurationMinutes: 180 };
+const site = { slotDurationMinutes: 240 };
 
 const DEFAULT_RULES = [
-  { dayOfWeek: 1, startTime: "08:00", endTime: "17:00", enabled: true },
-  { dayOfWeek: 2, startTime: "08:00", endTime: "17:00", enabled: true },
-  { dayOfWeek: 3, startTime: "08:00", endTime: "17:00", enabled: true },
-  { dayOfWeek: 4, startTime: "08:00", endTime: "17:00", enabled: true },
-  { dayOfWeek: 5, startTime: "08:00", endTime: "17:00", enabled: true },
-  { dayOfWeek: 6, startTime: "09:00", endTime: "14:00", enabled: true },
-  { dayOfWeek: 0, startTime: "09:00", endTime: "14:00", enabled: false },
+  { dayOfWeek: 1, startTime: "09:00", endTime: "17:00", enabled: true },
+  { dayOfWeek: 2, startTime: "09:00", endTime: "17:00", enabled: true },
+  { dayOfWeek: 3, startTime: "09:00", endTime: "17:00", enabled: true },
+  { dayOfWeek: 4, startTime: "09:00", endTime: "17:00", enabled: true },
+  { dayOfWeek: 5, startTime: "09:00", endTime: "17:00", enabled: true },
+  { dayOfWeek: 6, startTime: "09:00", endTime: "17:00", enabled: false },
+  { dayOfWeek: 0, startTime: "09:00", endTime: "17:00", enabled: false },
 ];
 
 const GALLERY_IMAGES = [
   {
-    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-    alt: "Clean modern home exterior after soft washing",
-    category: "House Soft Washing",
+    src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",
+    alt: "Construction site cleanup in progress",
+    category: "Construction Cleaning Services",
     sortOrder: 0,
   },
   {
-    src: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cd12?w=800&q=80",
-    alt: "Freshly cleaned concrete driveway",
-    category: "Driveway & Concrete",
+    src: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80",
+    alt: "Commercial building construction site",
+    category: "Construction Cleaning Services",
     sortOrder: 1,
   },
   {
-    src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
-    alt: "Restored wooden deck and patio",
-    category: "Deck & Patio",
+    src: "https://images.unsplash.com/photo-1581094794329-cd2a8a4d5c8e?w=800&q=80",
+    alt: "Heavy equipment on construction site",
+    category: "Premium Equipment Solutions",
     sortOrder: 2,
   },
   {
-    src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
-    alt: "Bright home with clean siding",
-    category: "House Soft Washing",
+    src: "https://images.unsplash.com/photo-1565008576549-57569a49371d?w=800&q=80",
+    alt: "Post-construction interior cleanup",
+    category: "Construction Cleaning Services",
     sortOrder: 3,
   },
   {
-    src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80",
-    alt: "Residential property curb appeal",
-    category: "Roof Cleaning",
+    src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
+    alt: "Commercial property exterior",
+    category: "Government & State Agency Clean Up",
     sortOrder: 4,
   },
   {
-    src: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&q=80",
-    alt: "Outdoor living space after cleaning",
-    category: "Deck & Patio",
+    src: "https://images.unsplash.com/photo-1598013276336-c9d3c5c0c8e8?w=800&q=80",
+    alt: "Disaster cleanup and debris removal",
+    category: "Emergency Disaster Cleanup",
     sortOrder: 5,
   },
 ];
@@ -112,9 +112,9 @@ async function seedDefaultTemplates() {
   await db.emailTemplate.create({
     data: {
       name: "Appointment reminder",
-      subject: "Reminder: your appointment on {{date}}",
+      subject: "Reminder: your cleanup appointment on {{date}}",
       bodyHtml:
-        "<p>Hi {{name}},</p><p>This is a friendly reminder about your upcoming appointment on <strong>{{date}}</strong> at <strong>{{time}}</strong>.</p><p>We look forward to seeing you at {{address}}.</p><p>— Elevate Exterior Cleaning</p>",
+        "<p>Hi {{name}},</p><p>This is a friendly reminder about your upcoming cleanup appointment on <strong>{{date}}</strong> at <strong>{{time}}</strong>.</p><p>We look forward to seeing you at {{address}}.</p><p>— Eddie Youman Services</p>",
     },
   });
 
