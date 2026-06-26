@@ -4,15 +4,13 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ButtonLink } from "@/components/ui/Button";
-import { getAllSlugs, getPostBySlug } from "@/lib/blog";
+import { getPostBySlug } from "@/lib/blog";
 import { site } from "@/lib/site-config";
+
+export const dynamic = "force-dynamic";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
-}
-
-export async function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

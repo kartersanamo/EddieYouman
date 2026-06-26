@@ -9,7 +9,7 @@ import {
 } from "@/lib/quote-mail";
 import { sendBookingConfirmedEmail } from "@/lib/booking-mail";
 import { bookingToEmailPayload, getSlotsForDate } from "@/lib/scheduling/slots";
-import { parseDollarsToCents } from "@/lib/recurring";
+import { parseDollarsToCents } from "@/lib/money";
 import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {

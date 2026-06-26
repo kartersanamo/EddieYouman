@@ -92,7 +92,6 @@ Add to the server crontab (daily is typical):
 
 ```bash
 0 8 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://eddie.kartersanamo.com/api/cron/process-emails
-0 8 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://eddie.kartersanamo.com/api/cron/recurring
 ```
 
 ### Post-deploy smoke test
@@ -116,5 +115,6 @@ Add to the server crontab (daily is typical):
 | `/quote/[token]` | Customer quote acceptance |
 | `/jobs/[token]` | Completed job summary + payment |
 | `/admin` | Dashboard (protected) |
+| `/admin/blog` | Create and edit blog posts |
 | `/admin/quotes` | Review and send quotes |
 | `/admin/bookings` | Manage confirmed bookings |

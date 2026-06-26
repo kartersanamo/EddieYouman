@@ -1,7 +1,7 @@
 import { InvoiceHtmlFrame } from "@/components/invoices/InvoiceHtmlFrame";
 import { JobActions } from "@/components/jobs/JobActions";
 import { db } from "@/lib/db";
-import { formatCents } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { site, services } from "@/lib/site-config";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,7 +41,6 @@ export default async function PublicJobPage({
     where: { publicToken: token },
     include: {
       photos: { orderBy: { sortOrder: "asc" } },
-      recurringService: true,
     },
   });
 
@@ -115,7 +114,6 @@ export default async function PublicJobPage({
               token={token}
               amountCents={booking.amountChargedCents ?? 0}
               paid={Boolean(booking.paidAt)}
-              hasRecurring={Boolean(booking.recurringService)}
             />
           </Suspense>
         </div>

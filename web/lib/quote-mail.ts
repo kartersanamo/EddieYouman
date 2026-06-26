@@ -3,7 +3,7 @@ import {
   getMailFromAddress,
   getMailgunClient,
 } from "@/lib/mailgun";
-import { formatCents } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { getSiteUrl } from "@/lib/stripe";
 import { site, services } from "@/lib/site-config";
 import type { QuoteRequest } from "@prisma/client";

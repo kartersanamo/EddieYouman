@@ -98,6 +98,7 @@ docker run -d \
   --restart unless-stopped \
   --network host \
   -v "${DATA_DIR_HOST}:/app/data" \
+  -v "${DEPLOY_ROOT}/content/blog:/app/content/blog" \
   "${ENV_FILE_ARGS[@]}" \
   -e HOSTNAME=0.0.0.0 \
   -e PORT="${HOST_PORT}" \

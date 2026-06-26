@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { upsertCustomer } from "@/lib/customers";
 import { db } from "@/lib/db";
 import { sendJobCompletedEmail } from "@/lib/job-mail";
-import { parseDollarsToCents } from "@/lib/recurring";
+import { parseDollarsToCents } from "@/lib/money";
 import { saveJobPhotos } from "@/lib/uploads";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";

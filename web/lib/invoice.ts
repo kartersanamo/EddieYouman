@@ -1,4 +1,4 @@
-import { formatCents } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { services, site } from "@/lib/site-config";
 import type { Booking } from "@prisma/client";
 

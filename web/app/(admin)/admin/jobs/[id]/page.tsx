@@ -1,6 +1,6 @@
 import { InvoiceHtmlFrame } from "@/components/invoices/InvoiceHtmlFrame";
 import { db } from "@/lib/db";
-import { formatCents, frequencyLabel } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { services } from "@/lib/site-config";
 import { getSiteUrl } from "@/lib/stripe";
 import Link from "next/link";
@@ -39,7 +39,6 @@ export default async function AdminJobPage({
     where: { id },
     include: {
       photos: { orderBy: { sortOrder: "asc" } },
-      recurringService: true,
     },
   });
 
@@ -110,26 +109,6 @@ export default async function AdminJobPage({
               </div>
             ) : null}
           </dl>
-        </section>
-
-        <section className="rounded-2xl border border-slate/10 bg-white p-6">
-          <h2 className="font-display text-lg font-bold text-forest">Recurring</h2>
-          {booking.recurringService ? (
-            <p className="mt-4 text-sm">
-              Active — {frequencyLabel(booking.recurringService.frequency)}
-              {booking.recurringService.nextServiceDate
-                ? ` · Next due ${formatDate(booking.recurringService.nextServiceDate)}`
-                : ""}
-            </p>
-          ) : (
-            <p className="mt-4 text-sm text-slate/60">No recurring service set up yet.</p>
-          )}
-          <Link
-            href="/admin/recurring"
-            className="mt-4 inline-block text-sm font-semibold text-teal hover:underline"
-          >
-            Manage recurring services →
-          </Link>
         </section>
       </div>
 

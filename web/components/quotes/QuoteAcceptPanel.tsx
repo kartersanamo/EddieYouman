@@ -2,7 +2,7 @@
 
 import { acceptQuote, declineQuote } from "@/lib/actions/quotes";
 import { CalendarScheduler } from "@/components/calendar/CalendarScheduler";
-import { formatCents } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { services } from "@/lib/site-config";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

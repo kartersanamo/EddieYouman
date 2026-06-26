@@ -3,7 +3,7 @@ import {
   getMailFromAddress,
   getMailgunClient,
 } from "@/lib/mailgun";
-import { formatCents } from "@/lib/recurring";
+import { formatCents } from "@/lib/money";
 import { getSiteUrl } from "@/lib/stripe";
 import { site } from "@/lib/site-config";
 import type { Booking } from "@prisma/client";
@@ -43,27 +43,24 @@ export async function sendJobCompletedEmail(booking: Booking): Promise<void> {
   const url = jobUrl(booking.publicToken);
   const amount = formatCents(booking.amountChargedCents);
   const payUrl = `${url}#pay`;
-  const recurringUrl = `${url}#recurring`;
 
   await sendMail({
     to: [booking.customerEmail],
     subject: `Your service is complete — ${site.shortName}`,
     text: `Hi ${booking.customerName},
 
-Your construction clean up is complete! View photos, pay your invoice (${amount}), or set up recurring service:
+Your construction clean up is complete! View photos and pay your invoice (${amount}):
 
 ${url}
 
 Pay now: ${payUrl}
-Set up recurring service: ${recurringUrl}
 
 — ${site.name}`,
     html: `
 <p>Hi ${booking.customerName},</p>
 <p>Your construction clean up is <strong>complete</strong>! View your job summary, before/after photos, and invoice at the link below.</p>
 <p style="margin:24px 0;">
-  <a href="${payUrl}" style="display:inline-block;background:#e67e22;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;margin-right:12px;">Pay ${amount}</a>
-  <a href="${recurringUrl}" style="display:inline-block;background:#1e2a3a;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">Schedule recurring</a>
+  <a href="${payUrl}" style="display:inline-block;background:#e67e22;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">Pay ${amount}</a>
 </p>
 <p><a href="${url}">View your job summary &amp; photos</a></p>
 <p>— ${site.name}</p>`,
