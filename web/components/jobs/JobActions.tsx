@@ -24,14 +24,37 @@ export function JobActions({
   const [recurringError, setRecurringError] = useState("");
   const [recurringSuccess, setRecurringSuccess] = useState(false);
   const [frequency, setFrequency] = useState<RecurringFrequency>("MONTHLY");
-  const [paidBanner, setPaidBanner] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [paymentTimedOut, setPaymentTimedOut] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("paid") === "1") {
-      setPaidBanner(true);
-      router.replace(`/jobs/${token}`, { scroll: false });
+    if (searchParams.get("paid") !== "1" || paid) return;
+
+    setProcessingPayment(true);
+    router.replace(`/jobs/${token}`, { scroll: false });
+
+    const refreshInterval = window.setInterval(() => {
+      router.refresh();
+    }, 2000);
+
+    const timeout = window.setTimeout(() => {
+      setPaymentTimedOut(true);
+      setProcessingPayment(false);
+      window.clearInterval(refreshInterval);
+    }, 30000);
+
+    return () => {
+      window.clearInterval(refreshInterval);
+      window.clearTimeout(timeout);
+    };
+  }, [searchParams, router, token, paid]);
+
+  useEffect(() => {
+    if (paid) {
+      setProcessingPayment(false);
+      setPaymentTimedOut(false);
     }
-  }, [searchParams, router, token]);
+  }, [paid]);
 
   const pay = async () => {
     setPayError("");
@@ -67,9 +90,17 @@ export function JobActions({
 
   return (
     <div className="space-y-6">
-      {paidBanner || paid ? (
+      {paid ? (
         <p className="rounded-xl bg-mint px-4 py-3 text-sm font-semibold text-forest">
           Payment received — thank you! Your invoice is below.
+        </p>
+      ) : processingPayment ? (
+        <p className="rounded-xl border border-slate/10 bg-white px-4 py-3 text-sm text-slate/70">
+          Processing payment… This usually takes a few seconds.
+        </p>
+      ) : paymentTimedOut ? (
+        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          If your payment completed, refresh this page to see your receipt.
         </p>
       ) : null}
 

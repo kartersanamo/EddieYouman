@@ -1,4 +1,4 @@
-import { createQuoteRequest } from "@/lib/quote-intake";
+import { createQuoteRequest, QuoteIntakeError } from "@/lib/quote-intake";
 import { getClientIpFromRequest } from "@/lib/request-ip";
 import { quoteRequestSchema } from "@/lib/validators/contact";
 import { NextRequest, NextResponse } from "next/server";
@@ -25,16 +25,21 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ ok: true, token: quote.publicToken });
     } catch (error) {
+      if (error instanceof QuoteIntakeError) {
+        const status =
+          error.code === "RATE_LIMIT"
+            ? 429
+            : error.code === "HONEYPOT" || error.code === "INVALID"
+              ? 400
+              : error.code === "MAILGUN_NOT_CONFIGURED"
+                ? 503
+                : 500;
+        return NextResponse.json({ error: error.message }, { status });
+      }
+
       const message =
         error instanceof Error ? error.message : "Quote request failed.";
-      const status =
-        message.includes("Too many requests") ||
-        message.includes("Unable to process")
-          ? message.includes("Too many")
-            ? 429
-            : 400
-          : 500;
-      return NextResponse.json({ error: message }, { status });
+      return NextResponse.json({ error: message }, { status: 500 });
     }
   } catch (error) {
     console.error("Quote request error:", error);

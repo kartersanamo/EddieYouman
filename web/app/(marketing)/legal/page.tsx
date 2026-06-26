@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { site } from "@/lib/site-config";
 
+const LAST_UPDATED = "June 24, 2026";
+
 export const metadata: Metadata = {
   title: "Legal Notice",
   description: `Terms and legal notice for ${site.name}.`,
@@ -14,9 +16,7 @@ export default function LegalPage() {
           <h1 className="font-display text-4xl font-bold text-forest">
             Legal Notice & Merchant Policies
           </h1>
-          <p className="mt-4 text-slate/70">
-            Last updated: {new Date().toLocaleDateString("en-US")}
-          </p>
+          <p className="mt-4 text-slate/70">Last updated: {LAST_UPDATED}</p>
 
           <h2>Business Information</h2>
           <p>
@@ -37,11 +37,22 @@ export default function LegalPage() {
             {site.serviceArea}.
           </p>
 
-          <h2>Booking & Quotes</h2>
+          <h2>Quotes & Booking</h2>
           <p>
-            Online bookings are subject to confirmation. Quotes are provided
-            based on project scope and are valid for the period stated at time
-            of issue. Pricing is not listed online; all quotes are customized.
+            Pricing is not listed online. Customers request a quote through our
+            Book Now flow; we review the request and send a personalized quote.
+            When you accept a quote, your appointment is confirmed. Preferred
+            times submitted with a quote request are not guaranteed until your
+            quote is accepted.
+          </p>
+
+          <h2>Payments</h2>
+          <p>
+            Payment for completed work is collected securely through Stripe
+            after the job is finished. You will receive an invoice and payment
+            link by email. Refunds for eligible disputes are handled on a
+            case-by-case basis — contact us within 14 days of payment if you
+            have a concern.
           </p>
 
           <h2>Cancellation Policy</h2>

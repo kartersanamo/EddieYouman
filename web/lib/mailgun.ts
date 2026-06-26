@@ -18,7 +18,10 @@ export function getMailFromAddress(): string | null {
 }
 
 export function getContactRecipients(): string[] {
-  const to = process.env.CONTACT_TO_EMAIL ?? process.env.ADMIN_EMAIL;
+  const to =
+    process.env.CONTACT_TO_EMAIL ??
+    process.env.ADMIN_EMAILS ??
+    process.env.ADMIN_EMAIL;
   if (!to) return [];
   return to.split(",").map((e) => e.trim()).filter(Boolean);
 }

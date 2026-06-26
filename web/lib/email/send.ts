@@ -6,7 +6,8 @@ import {
   getMailgunClient,
 } from "@/lib/mailgun";
 import { formatDateLong, formatTime12 } from "@/lib/scheduling/dates";
-import type { Booking, EmailAutomation, EmailTemplate } from "@prisma/client";
+import { services } from "@/lib/site-config";
+import type { Booking, EmailAutomation, EmailTemplate, QuoteRequest } from "@prisma/client";
 
 async function sendMail(options: {
   to: string;
@@ -129,6 +130,60 @@ export async function runAutomationForBooking(
       });
     } catch (error) {
       console.error(`Automation ${automation.id} failed:`, error);
+    }
+  }
+}
+
+function quoteVars(quote: QuoteRequest): TemplateVars {
+  const serviceIds = JSON.parse(quote.services) as string[];
+  const serviceLine = serviceIds
+    .map((id) => services.find((s) => s.id === id)?.title ?? id)
+    .join(", ");
+  const dateStr = quote.proposedDate?.toISOString().slice(0, 10);
+
+  return {
+    name: quote.customerName,
+    email: quote.customerEmail,
+    phone: quote.customerPhone ?? "",
+    address: quote.address ?? "",
+    date: dateStr ? formatDateLong(dateStr) : "",
+    time:
+      quote.proposedStartTime && quote.proposedEndTime
+        ? `${formatTime12(quote.proposedStartTime)} – ${formatTime12(quote.proposedEndTime)}`
+        : quote.proposedStartTime
+          ? formatTime12(quote.proposedStartTime)
+          : "",
+    services: serviceLine,
+  };
+}
+
+export async function runAutomationForQuote(quote: QuoteRequest) {
+  const automations = await db.emailAutomation.findMany({
+    where: { enabled: true, trigger: "ON_QUOTE_REQUESTED" },
+    include: { template: true },
+  });
+
+  const vars = quoteVars(quote);
+
+  for (const automation of automations) {
+    const existing = await db.emailSendLog.findFirst({
+      where: {
+        automationId: automation.id,
+        recipientEmail: quote.customerEmail.toLowerCase(),
+        bookingId: null,
+      },
+    });
+    if (existing) continue;
+
+    try {
+      await sendTemplateEmail({
+        template: automation.template,
+        to: quote.customerEmail,
+        vars,
+        automationId: automation.id,
+      });
+    } catch (error) {
+      console.error(`Quote automation ${automation.id} failed:`, error);
     }
   }
 }

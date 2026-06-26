@@ -1,13 +1,10 @@
+import { authorizeCronRequest } from "@/lib/cron-auth";
 import { processScheduledAutomations } from "@/lib/email/send";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  const authHeader = request.headers.get("authorization");
-
-  if (secret && authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = authorizeCronRequest(request.headers.get("authorization"));
+  if (denied) return denied;
 
   try {
     const result = await processScheduledAutomations();

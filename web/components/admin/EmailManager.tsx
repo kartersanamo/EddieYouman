@@ -12,6 +12,7 @@ import {
   sendManualCampaign,
   updateEmailAutomation,
 } from "@/lib/actions/emails";
+import type { EmailTrigger } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -51,7 +52,8 @@ interface SendLogRow {
 }
 
 const TRIGGERS = [
-  { value: "ON_BOOKING_REQUESTED", label: "When booking is requested" },
+  { value: "ON_QUOTE_REQUESTED", label: "When quote is requested (Book Now)" },
+  { value: "ON_BOOKING_REQUESTED", label: "When booking is requested (legacy)" },
   { value: "ON_BOOKING_CONFIRMED", label: "When booking is confirmed" },
   { value: "DAYS_BEFORE_APPOINTMENT", label: "X days before appointment" },
   { value: "DAYS_AFTER_APPOINTMENT", label: "X days after appointment" },
@@ -470,7 +472,7 @@ export function EmailManager({
                 run(async () => {
                   await createEmailAutomation({
                     name: automationForm.name,
-                    trigger: automationForm.trigger as "ON_BOOKING_REQUESTED",
+                    trigger: automationForm.trigger as EmailTrigger,
                     daysOffset: automationForm.trigger.includes("DAYS_")
                       ? automationForm.daysOffset
                       : null,

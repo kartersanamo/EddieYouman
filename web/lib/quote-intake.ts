@@ -1,5 +1,7 @@
 import { upsertCustomer } from "@/lib/customers";
 import { db } from "@/lib/db";
+import { runAutomationForQuote } from "@/lib/email/send";
+import { getMailgunClient } from "@/lib/mailgun";
 import {
   sendQuoteRequestConfirmation,
   sendQuoteRequestNotification,
@@ -13,6 +15,16 @@ import {
 import type { QuoteRequest } from "@prisma/client";
 
 export type QuoteIntakeInput = QuoteRequestFormData & { clientIp?: string };
+
+export class QuoteIntakeError extends Error {
+  constructor(
+    message: string,
+    readonly code: "INVALID" | "RATE_LIMIT" | "HONEYPOT" | "MAILGUN_NOT_CONFIGURED" | "EMAIL_FAILED"
+  ) {
+    super(message);
+    this.name = "QuoteIntakeError";
+  }
+}
 
 function buildMessage(data: QuoteRequestFormData): string {
   const serviceTitles = data.services
@@ -31,17 +43,27 @@ export async function createQuoteRequest(
 ): Promise<QuoteRequest> {
   const parsed = quoteRequestSchema.safeParse(input);
   if (!parsed.success) {
-    throw new Error("Invalid quote request data.");
+    throw new QuoteIntakeError("Invalid quote request data.", "INVALID");
   }
 
   const data = parsed.data;
 
   if (data.website && data.website.length > 0) {
-    throw new Error("Unable to process request.");
+    throw new QuoteIntakeError("Unable to process request.", "HONEYPOT");
   }
 
   if (input.clientIp && !checkRateLimit(`quote:${input.clientIp}`, 5)) {
-    throw new Error("Too many requests. Please try again later.");
+    throw new QuoteIntakeError(
+      "Too many requests. Please try again later.",
+      "RATE_LIMIT"
+    );
+  }
+
+  if (!getMailgunClient()) {
+    throw new QuoteIntakeError(
+      "Quote requests are temporarily unavailable. Please call or email us directly.",
+      "MAILGUN_NOT_CONFIGURED"
+    );
   }
 
   const [y, m, d] = data.scheduledDate.split("-").map(Number);
@@ -76,9 +98,25 @@ export async function createQuoteRequest(
 
   try {
     await sendQuoteRequestNotification(quote);
+  } catch (error) {
+    console.error("Quote admin notification failed:", error);
+    await db.quoteRequest.delete({ where: { id: quote.id } }).catch(() => {});
+    throw new QuoteIntakeError(
+      "We could not send your quote request. Please try again or contact us directly.",
+      "EMAIL_FAILED"
+    );
+  }
+
+  try {
     await sendQuoteRequestConfirmation(quote);
   } catch (error) {
-    console.error("Quote request email error:", error);
+    console.error("Quote customer confirmation failed:", error);
+  }
+
+  try {
+    await runAutomationForQuote(quote);
+  } catch (error) {
+    console.error("Quote automation error:", error);
   }
 
   return quote;

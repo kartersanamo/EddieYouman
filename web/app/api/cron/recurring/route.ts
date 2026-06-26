@@ -1,3 +1,4 @@
+import { authorizeCronRequest } from "@/lib/cron-auth";
 import { db } from "@/lib/db";
 import { addMonths, frequencyToMonths } from "@/lib/recurring";
 import { getContactRecipients, getMailFromAddress, getMailgunClient } from "@/lib/mailgun";
@@ -6,12 +7,8 @@ import { getSiteUrl } from "@/lib/stripe";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  const authHeader = request.headers.get("authorization");
-
-  if (secret && authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = authorizeCronRequest(request.headers.get("authorization"));
+  if (denied) return denied;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

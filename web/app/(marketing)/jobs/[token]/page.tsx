@@ -1,3 +1,4 @@
+import { InvoiceHtmlFrame } from "@/components/invoices/InvoiceHtmlFrame";
 import { JobActions } from "@/components/jobs/JobActions";
 import { db } from "@/lib/db";
 import { formatCents } from "@/lib/recurring";
@@ -124,9 +125,9 @@ export default async function PublicJobPage({
             <h2 className="font-display text-lg font-bold text-forest">
               Invoice {booking.invoiceNumber}
             </h2>
-            <div
-              className="mt-4 text-sm"
-              dangerouslySetInnerHTML={{ __html: booking.invoiceHtml }}
+            <InvoiceHtmlFrame
+              html={booking.invoiceHtml}
+              invoiceNumber={booking.invoiceNumber}
             />
           </section>
         ) : null}

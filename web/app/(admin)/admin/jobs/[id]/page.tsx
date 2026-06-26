@@ -1,3 +1,4 @@
+import { InvoiceHtmlFrame } from "@/components/invoices/InvoiceHtmlFrame";
 import { db } from "@/lib/db";
 import { formatCents, frequencyLabel } from "@/lib/recurring";
 import { services } from "@/lib/site-config";
@@ -161,9 +162,9 @@ export default async function AdminJobPage({
           <h2 className="font-display text-lg font-bold text-forest">
             Invoice {booking.invoiceNumber}
           </h2>
-          <div
-            className="prose prose-sm mt-4 max-w-none"
-            dangerouslySetInnerHTML={{ __html: booking.invoiceHtml }}
+          <InvoiceHtmlFrame
+            html={booking.invoiceHtml}
+            invoiceNumber={booking.invoiceNumber}
           />
         </section>
       ) : null}
