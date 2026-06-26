@@ -25,6 +25,68 @@ export function getJobPhotoPath(bookingId: string, filename: string): string {
   return path.join(getJobPhotoDir(bookingId), filename);
 }
 
+export function getGalleryImageDir(): string {
+  return path.join(getUploadsRoot(), "gallery");
+}
+
+export function getGalleryImagePath(filename: string): string {
+  return path.join(getGalleryImageDir(), path.basename(filename));
+}
+
+export function galleryImageSrc(filename: string): string {
+  return `/api/gallery/${path.basename(filename)}`;
+}
+
+export function filenameFromGallerySrc(src: string): string | null {
+  const match = src.match(/^\/api\/gallery\/([^/]+)$/);
+  return match?.[1] ?? null;
+}
+
+function extensionForMime(mimeType: string): string {
+  if (mimeType === "image/png") return ".png";
+  if (mimeType === "image/webp") return ".webp";
+  return ".jpg";
+}
+
+export async function saveGalleryImage(
+  file: File
+): Promise<{ filename: string; mimeType: string }> {
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Choose an image to upload.");
+  }
+
+  if (!ALLOWED_TYPES.has(file.type)) {
+    throw new Error("Images must be JPEG, PNG, or WebP.");
+  }
+  if (file.size > MAX_BYTES) {
+    throw new Error("Each image must be under 10 MB.");
+  }
+
+  const dir = getGalleryImageDir();
+  await mkdir(dir, { recursive: true });
+
+  const filename = `${randomUUID()}${extensionForMime(file.type)}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await writeFile(getGalleryImagePath(filename), buffer);
+
+  return { filename, mimeType: file.type };
+}
+
+export async function readGalleryImage(filename: string): Promise<Buffer> {
+  return readFile(getGalleryImagePath(filename));
+}
+
+export async function deleteGalleryImageFile(filename: string): Promise<void> {
+  const { unlink } = await import("fs/promises");
+  try {
+    await unlink(getGalleryImagePath(filename));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
 export async function saveJobPhotos(
   bookingId: string,
   files: File[]
@@ -48,12 +110,7 @@ export async function saveJobPhotos(
       throw new Error("Each photo must be under 10 MB.");
     }
 
-    const ext =
-      file.type === "image/png"
-        ? ".png"
-        : file.type === "image/webp"
-          ? ".webp"
-          : ".jpg";
+    const ext = extensionForMime(file.type);
     const filename = `${randomUUID()}${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(getJobPhotoPath(bookingId, filename), buffer);

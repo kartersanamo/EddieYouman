@@ -2,11 +2,58 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import {
+  deleteGalleryImageFile,
+  filenameFromGallerySrc,
+  galleryImageSrc,
+  saveGalleryImage,
+} from "@/lib/uploads";
 import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
+}
+
+async function nextSortOrder(): Promise<number> {
+  const maxOrder = await db.galleryImage.aggregate({ _max: { sortOrder: true } });
+  return (maxOrder._max.sortOrder ?? 0) + 1;
+}
+
+export async function uploadGalleryImage(formData: FormData) {
+  await requireAdmin();
+
+  const file = formData.get("file");
+  const alt = formData.get("alt");
+  const category = formData.get("category");
+  const published = formData.get("published");
+
+  if (!(file instanceof File)) {
+    throw new Error("Choose an image to upload.");
+  }
+  if (typeof alt !== "string" || !alt.trim()) {
+    throw new Error("Alt text is required.");
+  }
+  if (typeof category !== "string" || !category.trim()) {
+    throw new Error("Category is required.");
+  }
+
+  const saved = await saveGalleryImage(file);
+
+  await db.galleryImage.create({
+    data: {
+      src: galleryImageSrc(saved.filename),
+      alt: alt.trim(),
+      category: category.trim(),
+      sortOrder: await nextSortOrder(),
+      published: published !== "false",
+    },
+  });
+
+  revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
+  revalidatePath("/");
+  return { ok: true };
 }
 
 export async function createGalleryImage(data: {
@@ -71,6 +118,15 @@ export async function updateGalleryImage(
 
 export async function deleteGalleryImage(id: string) {
   await requireAdmin();
+
+  const image = await db.galleryImage.findUnique({ where: { id } });
+  if (!image) throw new Error("Image not found.");
+
+  const filename = filenameFromGallerySrc(image.src);
+  if (filename) {
+    await deleteGalleryImageFile(filename);
+  }
+
   await db.galleryImage.delete({ where: { id } });
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");

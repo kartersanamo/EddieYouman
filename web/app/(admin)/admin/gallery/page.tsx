@@ -19,7 +19,7 @@ export default async function AdminGalleryPage() {
     <div>
       <h1 className="font-display text-3xl font-bold text-forest">Gallery</h1>
       <p className="mt-2 text-slate/70">
-        Manage photos shown on the public gallery page. Reorder with move up/down.
+        Upload photos or add by URL. Reorder with move up/down.
       </p>
       <GalleryManager
         images={images.map((img) => ({

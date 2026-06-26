@@ -5,10 +5,11 @@ import {
   deleteGalleryImage,
   reorderGalleryImage,
   updateGalleryImage,
+  uploadGalleryImage,
 } from "@/lib/actions/gallery";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
 interface GalleryRow {
   id: string;
@@ -19,6 +20,12 @@ interface GalleryRow {
   published: boolean;
 }
 
+const emptyForm = {
+  alt: "",
+  category: "",
+  published: true,
+};
+
 export function GalleryManager({
   images,
   categories,
@@ -27,14 +34,20 @@ export function GalleryManager({
   categories: string[];
 }) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
-    src: "",
-    alt: "",
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [uploadForm, setUploadForm] = useState({
+    ...emptyForm,
     category: categories[0] ?? "",
-    published: true,
+  });
+  const [urlForm, setUrlForm] = useState({
+    src: "",
+    ...emptyForm,
+    category: categories[0] ?? "",
   });
 
   const run = (fn: () => Promise<unknown>) => {
@@ -51,6 +64,30 @@ export function GalleryManager({
     });
   };
 
+  const clearUploadSelection = () => {
+    setUploadFile(null);
+    if (uploadPreview) URL.revokeObjectURL(uploadPreview);
+    setUploadPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const onFileChange = (file: File | null) => {
+    clearUploadSelection();
+    if (!file) return;
+
+    setUploadFile(file);
+    setUploadPreview(URL.createObjectURL(file));
+    if (!uploadForm.alt) {
+      const name = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+      setUploadForm((prev) => ({ ...prev, alt: name }));
+    }
+  };
+
+  const resetUploadForm = () => {
+    clearUploadSelection();
+    setUploadForm({ ...emptyForm, category: uploadForm.category, published: true });
+  };
+
   return (
     <div className="mt-8 space-y-8">
       {message ? (
@@ -61,27 +98,39 @@ export function GalleryManager({
       ) : null}
 
       <section className="rounded-2xl border border-slate/10 bg-white p-6">
-        <h2 className="font-display text-lg font-bold text-forest">Add image</h2>
+        <h2 className="font-display text-lg font-bold text-forest">Upload image</h2>
         <p className="mt-1 text-sm text-slate/60">
-          Paste an image URL (your own hosted photos or a CDN link).
+          Upload JPEG, PNG, or WebP files up to 10 MB.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block text-sm sm:col-span-2">
-            <span className="text-slate/60">Image URL</span>
+            <span className="text-slate/60">Image file</span>
             <input
-              type="url"
-              value={form.src}
-              onChange={(e) => setForm({ ...form, src: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
-              placeholder="https://..."
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              disabled={pending}
+              onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
+              className="mt-1 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-mint file:px-4 file:py-2 file:text-sm file:font-semibold file:text-forest"
             />
           </label>
+          {uploadPreview ? (
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate/5 sm:col-span-2 sm:max-w-xs">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={uploadPreview}
+                alt="Upload preview"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : null}
           <label className="block text-sm">
             <span className="text-slate/60">Alt text</span>
             <input
               type="text"
-              value={form.alt}
-              onChange={(e) => setForm({ ...form, alt: e.target.value })}
+              value={uploadForm.alt}
+              disabled={pending}
+              onChange={(e) => setUploadForm({ ...uploadForm, alt: e.target.value })}
               className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
             />
           </label>
@@ -89,12 +138,13 @@ export function GalleryManager({
             <span className="text-slate/60">Category</span>
             <input
               type="text"
-              list="gallery-categories"
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              list="gallery-categories-upload"
+              value={uploadForm.category}
+              disabled={pending}
+              onChange={(e) => setUploadForm({ ...uploadForm, category: e.target.value })}
               className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
             />
-            <datalist id="gallery-categories">
+            <datalist id="gallery-categories-upload">
               {categories.map((c) => (
                 <option key={c} value={c} />
               ))}
@@ -103,8 +153,85 @@ export function GalleryManager({
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <input
               type="checkbox"
-              checked={form.published}
-              onChange={(e) => setForm({ ...form, published: e.target.checked })}
+              checked={uploadForm.published}
+              disabled={pending}
+              onChange={(e) =>
+                setUploadForm({ ...uploadForm, published: e.target.checked })
+              }
+            />
+            Published on site
+          </label>
+        </div>
+        <button
+          type="button"
+          disabled={pending || !uploadFile}
+          onClick={() => {
+            if (!uploadFile) return;
+            const formData = new FormData();
+            formData.append("file", uploadFile);
+            formData.append("alt", uploadForm.alt);
+            formData.append("category", uploadForm.category);
+            formData.append("published", String(uploadForm.published));
+            run(async () => {
+              await uploadGalleryImage(formData);
+              resetUploadForm();
+            });
+          }}
+          className="mt-4 rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white hover:bg-teal/90 disabled:opacity-50"
+        >
+          Upload image
+        </button>
+      </section>
+
+      <section className="rounded-2xl border border-slate/10 bg-white p-6">
+        <h2 className="font-display text-lg font-bold text-forest">Add by URL</h2>
+        <p className="mt-1 text-sm text-slate/60">
+          Or paste a link to an image hosted elsewhere.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm sm:col-span-2">
+            <span className="text-slate/60">Image URL</span>
+            <input
+              type="url"
+              value={urlForm.src}
+              disabled={pending}
+              onChange={(e) => setUrlForm({ ...urlForm, src: e.target.value })}
+              className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
+              placeholder="https://..."
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-slate/60">Alt text</span>
+            <input
+              type="text"
+              value={urlForm.alt}
+              disabled={pending}
+              onChange={(e) => setUrlForm({ ...urlForm, alt: e.target.value })}
+              className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-slate/60">Category</span>
+            <input
+              type="text"
+              list="gallery-categories-url"
+              value={urlForm.category}
+              disabled={pending}
+              onChange={(e) => setUrlForm({ ...urlForm, category: e.target.value })}
+              className="mt-1 w-full rounded-lg border border-slate/20 px-3 py-2"
+            />
+            <datalist id="gallery-categories-url">
+              {categories.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </label>
+          <label className="flex items-center gap-2 text-sm sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={urlForm.published}
+              disabled={pending}
+              onChange={(e) => setUrlForm({ ...urlForm, published: e.target.checked })}
             />
             Published on site
           </label>
@@ -114,13 +241,18 @@ export function GalleryManager({
           disabled={pending}
           onClick={() =>
             run(async () => {
-              await createGalleryImage(form);
-              setForm({ src: "", alt: "", category: form.category, published: true });
+              await createGalleryImage(urlForm);
+              setUrlForm({
+                src: "",
+                alt: "",
+                category: urlForm.category,
+                published: true,
+              });
             })
           }
-          className="mt-4 rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white hover:bg-teal/90 disabled:opacity-50"
+          className="mt-4 rounded-lg border border-slate/20 px-4 py-2 text-sm font-semibold text-forest hover:bg-slate/5 disabled:opacity-50"
         >
-          Add image
+          Add from URL
         </button>
       </section>
 
@@ -146,6 +278,7 @@ export function GalleryManager({
                     fill
                     className="object-cover"
                     sizes="192px"
+                    unoptimized={img.src.startsWith("/api/gallery/")}
                   />
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
